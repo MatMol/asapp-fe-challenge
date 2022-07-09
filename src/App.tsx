@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import debounce from 'lodash.debounce'
+import debounce from 'lodash.debounce';
+import CitiesService from './services/cities';
+import { CitiesParams, CityInfo } from "./interfaces/interfaces";
 import './App.css';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -13,53 +15,41 @@ import Box from "@mui/material/Box";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-interface CityInfo {
-  geonameid: number;
-  name: string;
-  country: string;
-  subcountry?: string;
-};
-
 function App() {
   const [cities, setCities] = useState<Array<CityInfo>>([]);
-  const [loading, setLoading] = useState<boolean>(false)
-  const [filter, setFilter] = useState<String>('');
-  const [limit, setLimit] = useState<number>(100);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const [filters, setFilters] = useState<CitiesParams>({
+    filter: '',
+    limit: 50,
+    offset: 0
+  })
+  // TODO: Create Custom Hook to handle search and filters
+  // Componentize the AutoComplete and also add a differ initialState for firstLoad
   useEffect(() => {
+    console.log('se llamo useEffect')
     setLoading(true)
-    fetch(`http://localhost:3030/cities?limit=${limit}`)
-      .then((response) => response.json())
-      .then((res) => {
-        setLoading(false)
-        setCities(res.data)
-      });
+    CitiesService.getCities(filters)
+    .then(response => {
+      setCities(response.data)
+      setLoading(false)
+    })
   }, []);
 
   useEffect(() => {
-    if (filter !== '') {
-      setLoading(true)
-      fetch(`http://localhost:3030/cities?limit=100&filter=${filter}`)
-      .then((response) => response.json())
-      .then((res) => {
-        setLoading(false)
-        setCities(res.data)
-      });
+    console.log('se llamo useEffect 2')
+    setLoading(true)
+    CitiesService.getCities(filters)
+    .then(response => {
+      setCities(response.data)
+      setLoading(false)
+    })
+  }, [filters]);
+
+  const onInputChange = debounce((value: string) => {
+    if (value.length > 3) {
+      setFilters({...filters, filter: value});
     }
-  }, [filter]);
-
-  useEffect(() => {
-      setLoading(true)
-      fetch(`http://localhost:3030/cities?limit=${limit}`)
-      .then((response) => response.json())
-      .then((res) => {
-        setLoading(false)
-        setCities(res.data)
-      });
-  }, [limit]);
-
-  const onInputChange = debounce((value: String) => {
-    if (value.length > 3) setFilter(value)
   }, 600);
 
   const handleScroll = (event: any) => {
@@ -67,7 +57,9 @@ function App() {
 
     const position = listboxNode.scrollTop + listboxNode.clientHeight;
     if (listboxNode.scrollHeight - position <= 1) {
-      setLimit(limit + 50);
+      setFilters(prevState => {
+        return {...filters, offset: prevState.offset + 50}
+      });
     }
   };
 
