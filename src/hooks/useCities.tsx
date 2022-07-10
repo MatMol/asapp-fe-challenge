@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import CitiesService from '../services/cities';
-import { CitiesParams, CityInfo } from "../interfaces/interfaces";
+import { CityInfo } from "../interfaces/interfaces";
 
 const useCities = () => {
     const [cities, setCities] = useState<Array<CityInfo>>([]);
