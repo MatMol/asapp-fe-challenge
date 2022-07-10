@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import debounce from 'lodash.debounce';
-import CitiesService from '../services/cities';
-import { CitiesParams, CityInfo } from "../interfaces/interfaces";
+import { CitiesParams } from "../interfaces/interfaces";
+import useCities from "../hooks/useCities";
 
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -14,39 +14,35 @@ import Box from "@mui/material/Box";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-function AutoComplete(initialCities: any) {
-    const [cities, setCities] = useState<Array<CityInfo>>(initialCities);
-    const [loading, setLoading] = useState<boolean>(false);
-
-    const [filters, setFilters] = useState<CitiesParams>({
-        filter: '',
-        limit: 50,
-        offset: 0
-    })
+function AutoComplete() {
+    const initialFilters = {filter: '', limit: 25, offset: 0};
+    const { cities, loading, fetchCities } = useCities();
+    const [filters, setFilters] = useState<CitiesParams>(initialFilters)
 
     useEffect(() => {
-        console.log('se llamo useEffect 2')
-        setLoading(true)
-        CitiesService.getCities(filters)
-        .then(response => {
-          setCities(response.data)
-          setLoading(false)
-        })
+        fetchCities(filters)
     }, [filters]);
 
     const onInputChange = debounce((value: string) => {
         if (value.length > 3) {
-          setFilters({...filters, filter: value});
+            setFilters(prevState => {
+                return {
+                    filter: value, 
+                    limit: prevState.limit >= 25 ? 25 : prevState.limit, 
+                    offset: prevState.offset >= 0 ? 0 : prevState.offset 
+                }
+            });
+        } else if (value.length === 0) {
+            setFilters(initialFilters)
         }
     }, 500);
     
     const handleScroll = (event: any) => {
         const listboxNode = event.currentTarget;
-
         const position = listboxNode.scrollTop + listboxNode.clientHeight;
         if (listboxNode.scrollHeight - position <= 1) {
             setFilters(prevState => {
-            return {...filters, offset: prevState.offset + 50}
+                return {...filters, limit: prevState.limit + 25, offset: prevState.offset + 25}
             });
         }
     };
@@ -59,7 +55,7 @@ function AutoComplete(initialCities: any) {
           disableCloseOnSelect
           loading={loading}
           isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) => (`${option.name} (${option.country})`)}
           filterOptions={(options) => options}
           renderOption={(props, option, { selected }) => (
             <Box component="li" {...props} key={option.geonameid}>
@@ -70,7 +66,9 @@ function AutoComplete(initialCities: any) {
                 checked={selected}
               />
               {option.name}
-              {/* TODO Add country and SubCountry */}
+              <br>
+              </br>
+              {option.country} - {option.subcountry}
             </Box>
           )}
           style={{ width: 500 }}
