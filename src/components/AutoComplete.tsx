@@ -17,7 +17,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 function AutoComplete() {
     const initialFilters = {filter: '', limit: 25, offset: 0};
     const { cities, loading, fetchCities } = useCities();
-    const [filters, setFilters] = useState<CitiesParams>(initialFilters)
+    const [filters, setFilters] = useState<CitiesParams>(initialFilters);
 
     useEffect(() => {
         fetchCities(filters)
@@ -38,13 +38,13 @@ function AutoComplete() {
     }, 500);
     
     const handleScroll = (event: any) => {
-        const listboxNode = event.currentTarget;
-        const position = listboxNode.scrollTop + listboxNode.clientHeight;
-        if (listboxNode.scrollHeight - position <= 1) {
-            setFilters(prevState => {
-                return {...filters, limit: prevState.limit + 25, offset: prevState.offset + 25}
-            });
-        }
+      const listboxNode = event.currentTarget;
+      const position = listboxNode.scrollTop + listboxNode.clientHeight;
+      if (listboxNode.scrollHeight - position === 0) {
+          setFilters(prevState => {
+              return {...filters, offset: prevState.offset + 24}
+          });
+      }
     };
 
     return (
