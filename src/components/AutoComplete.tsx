@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { CitiesParams } from "../interfaces/interfaces";
 import useCities from "../hooks/useCities";
@@ -48,53 +49,62 @@ function AutoComplete() {
     };
 
     return (
-        <Autocomplete
-          multiple
-          id="checkboxes-tags-demo"
-          options={cities}
-          disableCloseOnSelect
-          loading={loading}
-          isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
-          getOptionLabel={(option) => (`${option.name} (${option.country})`)}
-          filterOptions={(options) => options}
-          onChange={(event, value) => {
-            validateCityToUpdate(event, value)
-          }}
-          renderOption={(props, option, { selected }) => (
-            <Box component="li" {...props} key={option.geonameid}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
+      <section>
+        <div>
+          <Autocomplete
+            multiple
+            id="checkboxes-tags-demo"
+            options={cities}
+            disableCloseOnSelect
+            loading={loading}
+            isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
+            getOptionLabel={(option) => (`${option.name} (${option.country})`)}
+            filterOptions={(options) => options}
+            onChange={(event, value) => {
+              validateCityToUpdate(event, value)
+            }}
+            renderOption={(props, option, { selected }) => (
+              <Box component="li" {...props} key={option.geonameid}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.name}
+                <br>
+                </br>
+                {option.country} - {option.subcountry}
+              </Box>
+            )}
+            style={{ width: 500 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Type to filter by city name or country" 
+                onChange={e => {
+                  onInputChange(e.target.value)
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  ),
+                }}  
               />
-              {option.name}
-              <br>
-              </br>
-              {option.country} - {option.subcountry}
-            </Box>
-          )}
-          style={{ width: 500 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Type to filter by city name or country" 
-              onChange={e => {
-                onInputChange(e.target.value)
-              }}
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                ),
-              }}  
-            />
-          )}
-          ListboxProps={{
-            onScroll: handleScroll
-          }}
-        />
+            )}
+            ListboxProps={{
+              onScroll: handleScroll
+            }}
+          />
+        </div>
+        <div>
+          <Link className="btn"to={`/favorites`}>
+            Favorites
+          </Link>
+        </div>
+      </section>
       );
 };
 

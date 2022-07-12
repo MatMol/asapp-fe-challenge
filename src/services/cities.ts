@@ -16,7 +16,12 @@ class CitiesService {
     static updateCities(city: PreferredCitiesPatch) {
       const patchCityUrl = new URL(`${baseUrl}/preferences/cities`)
 
-      fetch(`${patchCityUrl}`, { method: "PATCH", headers: { "Content-type":"application/json-patch+json" }, body: JSON.stringify({city})})
+      fetch(`${patchCityUrl}`, { method: "PATCH", headers: { "Content-type":"application/json-patch+json" }, body: JSON.stringify(city)})
+      .then(response => {
+        fetch(`${baseUrl}/preferences/cities`)
+        .then((response) => response.json())
+        .then(res => console.log(res))
+      })
     }
 };
 

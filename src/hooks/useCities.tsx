@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CitiesService from '../services/cities';
 import { CityInfo } from "../interfaces/interfaces";
 
@@ -17,9 +17,6 @@ const useCities = () => {
         })
     }
 
-    // Note:
-    // I added this method for the PATCH but I don't have a POST method to create a record for this to update it
-    // I'll leave it anyway but currently I don't have a proper way of using this.
     const validateCityToUpdate = (event: any, cities: CityInfo[]) => {
         setLoading(true);
         const city = cities[cities.length - 1]; // To grab last item of array of cities to PATCH
@@ -42,7 +39,7 @@ const useCities = () => {
         setLoading(false);
     }
 
-    return { cities, loading, fetchCities, validateCityToUpdate }
+    return { cities, loading, savedCities, fetchCities, validateCityToUpdate }
 }
 
 export default useCities;
