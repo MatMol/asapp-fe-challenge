@@ -16,7 +16,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function AutoComplete() {
     const initialFilters = {filter: '', limit: 25, offset: 0};
-    const { cities, loading, fetchCities } = useCities();
+    const { cities, loading, fetchCities, validateCityToUpdate } = useCities();
     const [filters, setFilters] = useState<CitiesParams>(initialFilters);
 
     useEffect(() => {
@@ -57,6 +57,9 @@ function AutoComplete() {
           isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
           getOptionLabel={(option) => (`${option.name} (${option.country})`)}
           filterOptions={(options) => options}
+          onChange={(event, value) => {
+            validateCityToUpdate(event, value)
+          }}
           renderOption={(props, option, { selected }) => (
             <Box component="li" {...props} key={option.geonameid}>
               <Checkbox

@@ -10,3 +10,7 @@ export interface CitiesParams {
     limit: number;
     offset: number;
 }
+
+export interface PreferredCitiesPatch {
+    [key: string]: boolean;
+};
