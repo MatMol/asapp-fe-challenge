@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { CitiesParams } from "../interfaces/interfaces";
 import useCities from "../hooks/useCities";
+import { useSelector } from "react-redux";
 
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -15,15 +17,16 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function AutoComplete() {
+    const citiesSaved: any = useSelector((state) => state);
     const initialFilters = {filter: '', limit: 25, offset: 0};
-    const { cities, loading, fetchCities, validateCityToUpdate } = useCities();
     const [filters, setFilters] = useState<CitiesParams>(initialFilters);
+    const { cities, loading, fetchCities, validateCityToUpdate } = useCities();
 
     useEffect(() => {
-        fetchCities(filters)
+      fetchCities(filters)
     }, [filters]);
 
-    const onInputChange = debounce((value: string) => {
+    const handleInput = debounce((value: string) => {
         if (value.length > 3) {
             setFilters(prevState => {
                 return {
@@ -48,53 +51,64 @@ function AutoComplete() {
     };
 
     return (
-        <Autocomplete
-          multiple
-          id="checkboxes-tags-demo"
-          options={cities}
-          disableCloseOnSelect
-          loading={loading}
-          isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
-          getOptionLabel={(option) => (`${option.name} (${option.country})`)}
-          filterOptions={(options) => options}
-          onChange={(event, value) => {
-            validateCityToUpdate(event, value)
-          }}
-          renderOption={(props, option, { selected }) => (
-            <Box component="li" {...props} key={option.geonameid}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
+      <section>
+        <div>
+          <Autocomplete
+            multiple
+            id="checkboxes-tags-demo"
+            limitTags={3}
+            options={cities}
+            defaultValue={citiesSaved}
+            disableCloseOnSelect
+            loading={loading}
+            isOptionEqualToValue={(option, value) => option.geonameid === value.geonameid}
+            getOptionLabel={(option) => (`${option.name} (${option.country})`)}
+            filterOptions={(options) => options}
+            onChange={(event, value) => {
+              validateCityToUpdate(value)
+            }}
+            renderOption={(props, option, { selected }) => (
+              <Box component="li" {...props} key={option.geonameid}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.name}
+                <br>
+                </br>
+                {option.country} - {option.subcountry}
+              </Box>
+            )}
+            style={{ width: 500 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Type to filter by city name or country" 
+                onChange={e => {
+                  handleInput(e.target.value)
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  ),
+                }}  
               />
-              {option.name}
-              <br>
-              </br>
-              {option.country} - {option.subcountry}
-            </Box>
-          )}
-          style={{ width: 500 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Type to filter by city name or country" 
-              onChange={e => {
-                onInputChange(e.target.value)
-              }}
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                ),
-              }}  
-            />
-          )}
-          ListboxProps={{
-            onScroll: handleScroll
-          }}
-        />
+            )}
+            ListboxProps={{
+              onScroll: handleScroll
+            }}
+          />
+        </div>
+        <div>
+          <Link className="btn"to={`/favorites`}>
+            Favorites
+          </Link>
+        </div>
+      </section>
       );
 };
 

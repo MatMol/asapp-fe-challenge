@@ -1,11 +1,15 @@
 import { useState } from "react";
 import CitiesService from '../services/cities';
 import { CityInfo } from "../interfaces/interfaces";
+import { useDispatch } from "react-redux";
+import citiesAction from "../actions/citiesAction";
 
-const useCities = () => {
+const useCities = (citiesToSave?: CityInfo[]) => {
     const [cities, setCities] = useState<Array<CityInfo>>([]);
-    const [savedCities, setSavedCities] = useState<Array<CityInfo>>([]);
+    const [savedCities, setSavedCities] = useState<Array<CityInfo>>(citiesToSave || []);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
 
     const fetchCities = (filters: any) => {
         setLoading(true)
@@ -17,20 +21,20 @@ const useCities = () => {
         })
     }
 
-    // Note:
-    // I added this method for the PATCH but I don't have a POST method to create a record for this to update it
-    // I'll leave it anyway but currently I don't have a proper way of using this.
-    const validateCityToUpdate = (event: any, cities: CityInfo[]) => {
+    const validateCityToUpdate = (cities: CityInfo[]) => {
         setLoading(true);
-        const city = cities[cities.length - 1]; // To grab last item of array of cities to PATCH
 
         if (savedCities.length === 0 || cities.length > savedCities.length) {
+            const city = cities[cities.length - 1];
+            
             setSavedCities(cities)
+            dispatch(citiesAction(cities))
             updateCity(city, true)
         } else {
-            setSavedCities(cities)
-
             const cityToRemove = savedCities.filter(x => !cities.includes(x));
+
+            setSavedCities(cities)
+            dispatch(citiesAction(cities))
             updateCity(cityToRemove[0], false)
         }
 
@@ -38,11 +42,11 @@ const useCities = () => {
     }
 
     const updateCity = (city: CityInfo, status: boolean, ) => {
-        CitiesService.updateCities({[city.geonameid]: status});
+        CitiesService.citiesAction({[city.geonameid]: status});
         setLoading(false);
     }
 
-    return { cities, loading, fetchCities, validateCityToUpdate }
+    return { cities, loading, savedCities, fetchCities, validateCityToUpdate }
 }
 
 export default useCities;
