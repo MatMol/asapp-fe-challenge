@@ -22,6 +22,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "redux": "^4.2.0",
+    "redux-mock-store": "^1.5.4",
     "sass": "^1.53.0",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4"
@@ -51,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.7"
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/redux-mock-store": "^1.0.3"
   }
 }
