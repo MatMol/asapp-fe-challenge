@@ -41,13 +41,13 @@ function Favorites() {
                                             </IconButton>
                                         </span>
                                         <Typography style={{ marginBottom: 5, maxWidth: 208, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                                            Country: {city.country}
+                                            Country: <b>{city.country}</b>
                                         </Typography>
                                         <Typography style={{ marginBottom: 5, maxWidth: 208, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                                            State: {city.subcountry}
+                                            State: <b>{city.subcountry}</b>
                                         </Typography>
                                         <Typography style={{ marginBottom: 5, maxWidth: 208, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
-                                            City: {city.name}
+                                            City: <b>{city.name}</b>
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -57,7 +57,7 @@ function Favorites() {
                     :
                     <div className="favorite-empty">
                         <h3>
-                            You have no favorites currently.
+                            You currently have no favorites.
                         </h3>
                     </div>
                 }
