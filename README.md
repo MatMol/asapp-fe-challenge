@@ -38,3 +38,12 @@ Thank you for this opportunity!
 
 https://github.com/MatMol
 https://www.linkedin.com/in/mateo-molina/
+
+## Improvements ##
+
+From a UI perspective I would've like to:
+
+- Have the ability to add flags for the User in the AutoComplete section, so when you search or select the City appears with the correspondant flag of the country or state (ex. Vatican City)
+- Probably in my case where I have the Favorite page apart from the AutoComplete, to have the flags as mentioned above or some type of image to show that specific City.
+- Add some type of notification for the user when the City is added/removed from his/her selection or when an error occurs.
+- Maybe add a certain brand to the page to know specifically why I'm searching my favorite cities.
