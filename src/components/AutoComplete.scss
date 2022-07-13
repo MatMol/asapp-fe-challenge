@@ -1,0 +1,41 @@
+.content {
+    &-autocomplete{
+        width: 500px;
+    }
+    &-action{
+        margin-top: 16px;
+        text-align: center;
+        .btn {
+            text-decoration: none;
+            button {
+                color: black;
+                font-weight: bold;
+                border: 1px solid black;
+                &:hover {
+                    background-color: #9B287B;
+                    color: white;
+                    border: none;
+                }
+            }
+        }
+    }
+}
+
+.option {
+    p {
+        font-weight: 700;
+        font-size: 16px;
+        span {
+            font-size: 14px;
+            font-weight: 400;
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .content {
+        &-autocomplete{
+            width: 350px;
+        }
+    }
+}

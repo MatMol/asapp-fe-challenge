@@ -19,6 +19,10 @@ const useCities = (citiesToSave?: CityInfo[]) => {
             response.data.length ? setCities(response.data) : setCities([])
             setLoading(false)
         })
+        .catch((error) => {
+            setLoading(false)
+            return [];
+        })
     }
 
     const validateCityToUpdate = (cities: CityInfo[]) => {
