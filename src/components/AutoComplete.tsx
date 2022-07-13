@@ -12,13 +12,17 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from "@mui/material/Box";
+import Button from '@mui/material/Button';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+import './AutoComplete.scss';
  
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function AutoComplete() {
     const citiesSaved: any = useSelector((state) => state);
-    const initialFilters = {filter: '', limit: 25, offset: 0};
+    const initialFilters = {filter: '', limit: 24, offset: 0};
     const [filters, setFilters] = useState<CitiesParams>(initialFilters);
     const { cities, loading, fetchCities, validateCityToUpdate } = useCities();
 
@@ -31,7 +35,7 @@ function AutoComplete() {
             setFilters(prevState => {
                 return {
                     filter: value, 
-                    limit: prevState.limit >= 25 ? 25 : prevState.limit, 
+                    limit: prevState.limit >= 24 ? 24 : prevState.limit, 
                     offset: prevState.offset >= 0 ? 0 : prevState.offset 
                 }
             });
@@ -45,18 +49,20 @@ function AutoComplete() {
       const position = listboxNode.scrollTop + listboxNode.clientHeight;
       if (listboxNode.scrollHeight - position === 0) {
           setFilters(prevState => {
-              return {...filters, offset: prevState.offset + 24}
+              return {...filters, offset: prevState.offset + 23}
           });
       }
     };
 
     return (
-      <section>
-        <div>
+      <section className="content">
+        <div className="content-title">
+            <h1>Select your favorite city!</h1>
+        </div>
+        <div className="content-autocomplete">
           <Autocomplete
             multiple
-            id="checkboxes-tags-demo"
-            limitTags={3}
+            limitTags={2}
             options={cities}
             defaultValue={citiesSaved}
             disableCloseOnSelect
@@ -68,20 +74,18 @@ function AutoComplete() {
               validateCityToUpdate(value)
             }}
             renderOption={(props, option, { selected }) => (
-              <Box component="li" {...props} key={option.geonameid}>
+              <Box component="li" {...props} style={{ padding: 0 }} key={option.geonameid}>
                 <Checkbox
                   icon={icon}
                   checkedIcon={checkedIcon}
                   style={{ marginRight: 8 }}
                   checked={selected}
                 />
-                {option.name}
-                <br>
-                </br>
-                {option.country} - {option.subcountry}
+                <div className="option">
+                  <p>{option.name} <span>({option.country} - {option.subcountry})</span></p>
+                </div>
               </Box>
             )}
-            style={{ width: 500 }}
             renderInput={(params) => (
               <TextField {...params} label="Type to filter by city name or country" 
                 onChange={e => {
@@ -103,9 +107,11 @@ function AutoComplete() {
             }}
           />
         </div>
-        <div>
+        <div className="content-action">
           <Link className="btn"to={`/favorites`}>
-            Favorites
+            <Button variant="outlined" endIcon={<FavoriteIcon />}>
+                Go to Favorites
+            </Button>
           </Link>
         </div>
       </section>

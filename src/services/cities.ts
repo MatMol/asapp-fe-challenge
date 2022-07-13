@@ -11,12 +11,20 @@ class CitiesService {
 
       return fetch(getCitiesUrl)
         .then((response) => response.json())
+        .catch((error) => {
+          console.error('There was an issue with the request, please try again.');
+          throw error
+        })
     }
 
     static citiesAction(city: PreferredCitiesPatch) {
       const patchCityUrl = new URL(`${baseUrl}/preferences/cities`)
 
       fetch(`${patchCityUrl}`, { method: "PATCH", headers: { "Content-type":"application/json-patch+json" }, body: JSON.stringify(city)})
+      .catch((error) => {
+        console.error('There was an issue with the request, please try again.');
+        throw error
+      })
     }
 };
 

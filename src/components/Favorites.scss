@@ -1,0 +1,38 @@
+.favorite {
+    h1  {
+        text-align: center;
+    }
+    &-container {
+        max-width: 1000px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    &-action {
+        margin-top: 10px;
+        text-align: center;
+        .btn {
+            text-decoration: none;
+            button {
+                color: black;
+                font-weight: bold;
+                border: 1px solid black;
+                &:hover {
+                    background-color: #9B287B;
+                    color: white;
+                    border: none;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .favorite {
+        &-container {
+            justify-content: center; 
+        }
+    }
+}
