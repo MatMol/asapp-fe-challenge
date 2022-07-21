@@ -17,15 +17,44 @@ class CitiesService {
         })
     }
 
-    static citiesAction(city: PreferredCitiesPatch) {
-      const patchCityUrl = new URL(`${baseUrl}/preferences/cities`)
+  static async getFavorites() {
+    const patchCityUrl = new URL(`${baseUrl}/preferences/cities?limit=100&offset=0`)
 
-      fetch(`${patchCityUrl}`, { method: "PATCH", headers: { "Content-type":"application/json-patch+json" }, body: JSON.stringify(city)})
-      .catch((error) => {
-        console.error('There was an issue with the request, please try again.');
-        throw error
-      })
+    const citiesId = await fetch(`${patchCityUrl}`)
+      .then((response => response.json()))
+      .then((res) => res.data)
+    
+    if (citiesId.length > 0) {
+      const citiesArray = await Promise.all(citiesId.map((cityId: number) => fetch(`${baseUrl}/cities/${cityId}`)))
+      const jsons = await Promise.all(citiesArray.map(r => r.json()))
+      return jsons
+    } else {
+      return []
     }
+    
+  }
+
+  static citiesAction(city: PreferredCitiesPatch) {
+    const patchCityUrl = new URL(`${baseUrl}/preferences/cities`)
+
+    fetch(`${patchCityUrl}`, { method: "PATCH", headers: { "Content-type":"application/json-patch+json" }, body: JSON.stringify(city)})
+    .catch((error) => {
+      console.error('There was an issue with the request, please try again.');
+      throw error
+    })
+  }
+
+  static fetchAllSavedCities = async (ids: any) => {
+    const res = await Promise.all(ids.map((id: number) => {
+        fetch(`${baseUrl}/cities/${id}`)
+        .then(response => response.json())
+        .then(rp => console.log(rp))
+    }))
+    // console.log('res', res)
+    // const jsons = await Promise.all(res.map(r => r.json()))
+
+    return res
+}
 };
 
 export default CitiesService;
