@@ -1,7 +1,9 @@
+import React, { useState, useEffect } from "react";
+
 import { useSelector } from "react-redux";
 import useCities from "../hooks/useCities";
 import { Link } from 'react-router-dom';
-
+import CitiesService from '../services/cities';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -14,11 +16,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './Favorites.scss';
 
 function Favorites() {
-    const citiesSaved: any = useSelector((state) => state);
-    const { validateCityToUpdate } = useCities(citiesSaved);
+    // In the Favorites page we always use the Store state
+    // because to get here we need first to go through the AutoComplete page
+    // and there if we already saved favorites from another 'session'
+    // we retrieve and save them in the store in that call.
+    const citiesSavedInStore: any = useSelector((state) => state);
+    const { validateCityToUpdate } = useCities(citiesSavedInStore);
 
     const checkCity = (city: any) => {
-        let currentCities = citiesSaved.filter((item: any) => item !== city);
+        let currentCities = citiesSavedInStore.filter((item: any) => item !== city);
         validateCityToUpdate(currentCities)
     }
 
@@ -29,8 +35,8 @@ function Favorites() {
             </h1>
             <div className="favorite-container">
                 {
-                    citiesSaved?.length > 0 ? 
-                    citiesSaved?.map((city: any) => {
+                    citiesSavedInStore?.length > 0 ? 
+                    citiesSavedInStore?.map((city: any) => {
                         return (
                             <Box key={city.geonameid} sx={{ minWidth: 240, maxWidth: 240, margin: 0.5}}>
                                 <Card style={{ position: "relative" }}>
